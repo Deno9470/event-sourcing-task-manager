@@ -5,6 +5,8 @@ import ru.quipy.api.aggregates.ProjectAggregate
 import ru.quipy.api.aggregatesEvents.*
 import ru.quipy.core.EventSourcingService
 import ru.quipy.domain.Event
+import ru.quipy.dto.CreateProjectDto
+import ru.quipy.dto.CreateStatusDto
 import ru.quipy.logic.*
 import ru.quipy.logic.aggregateCommands.*
 import ru.quipy.logic.aggregateStates.ColorEnum
@@ -34,12 +36,12 @@ class ProjectController(
     }
 
     @PostMapping("")
-    fun createProject(@RequestBody projectName: String, @RequestBody description: String, @RequestBody creatorId: UUID) : Event<ProjectAggregate> {
+    fun createProject(@RequestBody createProjectDto: CreateProjectDto) : Event<ProjectAggregate> {
         return projectEsService.create {
             it.create(
-                projectName,
-                description,
-                creatorId
+                createProjectDto.projectName,
+                createProjectDto.description,
+                createProjectDto.creatorId
             ).first()
         }
     }
@@ -65,9 +67,12 @@ class ProjectController(
         }
     }
     @PostMapping("/{projectId}/statuses/")
-    fun createStatus(@PathVariable projectId: UUID, @RequestBody statusId: UUID, @RequestBody title: String, @RequestBody color: ColorEnum ) : TaskStatusCreatedEvent {
+    fun createStatus(@PathVariable projectId: UUID, @RequestBody createStatusDto: CreateStatusDto) : TaskStatusCreatedEvent {
         return projectEsService.update(projectId) {
-            it.createTaskStatus(title,color)
+            it.createTaskStatus(
+                createStatusDto.title,
+                createStatusDto.color,
+            )
         }
     }
 

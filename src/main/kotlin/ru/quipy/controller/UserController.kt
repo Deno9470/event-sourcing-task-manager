@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*
 import ru.quipy.api.aggregates.UserAggregate
 import ru.quipy.api.aggregatesEvents.UserRegisteredEvent
 import ru.quipy.core.EventSourcingService
+import ru.quipy.dto.CreateUserDto
 import ru.quipy.logic.aggregateCommands.registerUser
 import ru.quipy.logic.aggregateStates.UserAggregateState
 import java.util.*
@@ -26,8 +27,8 @@ class UserController(
     }
 
     @PostMapping("/")
-    fun createUser(@RequestBody nickname: String, @RequestBody name: String, @RequestBody password: String) : UserRegisteredEvent {
-        return userEsService.create { it.registerUser(UUID.randomUUID(), nickname, name, password) }
+    fun createUser(@RequestBody createUserDto: CreateUserDto) : UserRegisteredEvent {
+        return userEsService.create { it.registerUser(UUID.randomUUID(), createUserDto.nickname, createUserDto.name, createUserDto.password) }
     }
     // TODO DTO
 }

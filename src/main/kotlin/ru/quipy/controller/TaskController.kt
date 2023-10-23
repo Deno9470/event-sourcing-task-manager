@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*
 import ru.quipy.api.aggregates.TaskAggregate
 import ru.quipy.api.aggregatesEvents.*
 import ru.quipy.core.EventSourcingService
+import ru.quipy.dto.CreateTaskDto
 import ru.quipy.logic.aggregateCommands.*
 import ru.quipy.logic.aggregateStates.TaskAggregateState
 import java.util.*
@@ -30,16 +31,17 @@ class TaskController(
     }
 
     @PostMapping("")
-    fun createTask(@RequestBody taskName: String, @RequestBody description: String, @RequestBody parentProjectId : UUID) : TaskCreatedEvent {
+    fun createTask(@RequestBody createTaskDto: CreateTaskDto) : TaskCreatedEvent {
         return taskEsService.create {
             it.createTask(
-                taskName = taskName,
-                description = description,
-                statusId = UUID.fromString(""),    // TODO Implement static StatusId Created
-                parentProjectId = parentProjectId
+                taskName = createTaskDto.taskName,
+                description = createTaskDto.description,
+                statusId = UUID(0,0),    // TODO Implement static StatusId Created
+                parentProjectId = createTaskDto.parentProjectId
             )
         }
     }
+    
     @PatchMapping("/{taskId}")
     fun renameTask(@PathVariable taskId: UUID, @RequestBody newTaskName : String) : TaskRenamedEvent {
         return taskEsService.update(taskId) {
