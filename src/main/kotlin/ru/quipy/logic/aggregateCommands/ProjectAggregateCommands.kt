@@ -6,19 +6,19 @@ import ru.quipy.domain.Event
 import ru.quipy.logic.aggregateStates.ColorEnum
 import ru.quipy.logic.aggregateStates.ProjectAggregateState
 import java.util.*
+import kotlin.collections.ArrayList
 
 // Commands : takes something -> returns event
 // Here the commands are represented by extension functions, but also can be the class member functions
 
-//TODO Is it legit if command returns list of Events???
-fun ProjectAggregateState.create(name: String, description: String, creatorId : UUID) : List<Event<ProjectAggregate>> {
+fun ProjectAggregateState.create(name: String, description: String, creatorId: UUID): List<Event<ProjectAggregate>> {
     val projectId = UUID.randomUUID()
-
-    //TODO Multiply Event Creation
-    return listOf(
-        ProjectCreatedEvent(projectId = projectId, name, description),
-        ParticipantAddedEvent(projectId, creatorId)
+    return ArrayList(
+        listOf(
+            ProjectCreatedEvent(projectId, name, description),
+            ParticipantAddedEvent(projectId, creatorId)
         )
+    )
 }
  fun ProjectAggregateState.renameProject(newProjectName: String) : ProjectRenamedEvent {
      return ProjectRenamedEvent(this.getId(),this.name, newProjectName)

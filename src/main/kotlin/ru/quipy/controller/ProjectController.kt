@@ -36,13 +36,13 @@ class ProjectController(
     }
 
     @PostMapping("")
-    fun createProject(@RequestBody createProjectDto: CreateProjectDto) : Event<ProjectAggregate> {
-        return projectEsService.create {
-            it.create(
+    fun createProject(@RequestBody createProjectDto: CreateProjectDto) : List<Event<ProjectAggregate>> {
+        return projectEsService.create { project ->
+            project.create(
                 createProjectDto.projectName,
                 createProjectDto.description,
                 createProjectDto.creatorId
-            ).first()
+            )
         }
     }
 
