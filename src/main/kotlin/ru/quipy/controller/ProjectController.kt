@@ -1,19 +1,23 @@
 package ru.quipy.controller
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import ru.quipy.api.ProjectAggregate
-import ru.quipy.api.ProjectCreatedEvent
-import ru.quipy.api.TaskCreatedEvent
+import org.springframework.web.bind.annotation.*
+import ru.quipy.api.aggregates.ProjectAggregate
+import ru.quipy.api.aggregatesEvents.*
 import ru.quipy.core.EventSourcingService
-import ru.quipy.logic.ProjectAggregateState
-import ru.quipy.logic.addTask
-import ru.quipy.logic.create
+import ru.quipy.domain.Event
+import ru.quipy.dto.CreateProjectDto
+import ru.quipy.dto.CreateStatusDto
+import ru.quipy.logic.*
+import ru.quipy.logic.aggregateCommands.*
+import ru.quipy.logic.aggregateStates.ColorEnum
+import ru.quipy.logic.aggregateStates.ProjectAggregateState
 import java.util.*
+
+//Создайте REST API для
+// создания,
+// измнения и
+// получения последней версии агрегатов по его ID.
+
 
 @RestController
 @RequestMapping("/projects")
@@ -21,20 +25,61 @@ class ProjectController(
     val projectEsService: EventSourcingService<UUID, ProjectAggregate, ProjectAggregateState>
 ) {
 
-    @PostMapping("/{projectTitle}")
-    fun createProject(@PathVariable projectTitle: String, @RequestParam creatorId: String) : ProjectCreatedEvent {
-        return projectEsService.create { it.create(UUID.randomUUID(), projectTitle, creatorId) }
+    @GetMapping("")
+    fun getAllProjects() : List<ProjectAggregateState> {
+        throw IllegalAccessException()
     }
 
     @GetMapping("/{projectId}")
-    fun getAccount(@PathVariable projectId: UUID) : ProjectAggregateState? {
+    fun getProject(@PathVariable projectId: UUID) : ProjectAggregateState? {
         return projectEsService.getState(projectId)
     }
 
-    @PostMapping("/{projectId}/tasks/{taskName}")
-    fun createTask(@PathVariable projectId: UUID, @PathVariable taskName: String) : TaskCreatedEvent {
+    @PostMapping("")
+    fun createProject(@RequestBody createProjectDto: CreateProjectDto) : List<Event<ProjectAggregate>> {
+        return projectEsService.create { project ->
+            project.create(
+                createProjectDto.projectName,
+                createProjectDto.description,
+                createProjectDto.creatorId
+            )
+        }
+    }
+
+    @PatchMapping("/{projectId}")
+    fun renameTask(@PathVariable projectId: UUID, @RequestBody newProjectName: String) : ProjectRenamedEvent {
         return projectEsService.update(projectId) {
-            it.addTask(taskName)
+            it.renameProject(newProjectName)
+        }
+    }
+
+    @PostMapping("/{projectId}/participants/{userId}")
+    fun addParticipant(@PathVariable projectId: UUID, @PathVariable userId: UUID) : ParticipantAddedEvent {
+        return projectEsService.update(projectId) {
+            it.addParticipant(userId)
+        }
+    }
+
+    @DeleteMapping("/{projectId}/participants/{userId}")
+    fun removeParticipant(@PathVariable projectId: UUID, @PathVariable userId: UUID) : ParticipantRemovedEvent {
+        return projectEsService.update(projectId) {
+            it.removeParticipant(userId)
+        }
+    }
+    @PostMapping("/{projectId}/statuses/")
+    fun createStatus(@PathVariable projectId: UUID, @RequestBody createStatusDto: CreateStatusDto) : TaskStatusCreatedEvent {
+        return projectEsService.update(projectId) {
+            it.createTaskStatus(
+                createStatusDto.title,
+                createStatusDto.color,
+            )
+        }
+    }
+
+    @DeleteMapping("/{projectId}/statuses/{statusId}")
+    fun removeStatus(@PathVariable projectId: UUID, @PathVariable statusId: UUID) : TaskStatusRemovedEvent {
+        return projectEsService.update(projectId) {
+            it.removeTaskStatus(statusId)
         }
     }
 }
