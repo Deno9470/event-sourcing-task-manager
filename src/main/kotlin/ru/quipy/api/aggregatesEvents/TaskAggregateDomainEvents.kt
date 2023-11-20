@@ -63,8 +63,8 @@ class ExecutorRemovedEvent(
 @DomainEvent(name = TASK_STATUS_CHANGED_EVENT)
 class TaskStatusChangedEvent(
     val taskId: UUID,
-    val oldStatusId : UUID,
-    val newStatusId : UUID,
+    val oldStatusId: UUID?,
+    val newStatusId: UUID,
     createdAt: Long = System.currentTimeMillis(),
 ) : Event<TaskAggregate>(
     name = TASK_STATUS_CHANGED_EVENT,
