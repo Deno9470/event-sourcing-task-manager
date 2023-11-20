@@ -1,4 +1,4 @@
-package ru.quipy
+package ru
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
