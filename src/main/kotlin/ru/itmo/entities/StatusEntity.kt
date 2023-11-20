@@ -9,5 +9,6 @@ data class StatusEntity (
     val prev: UUID?,
     val title: String,
     val color: ColorEnum,
-    var parentID : UUID
+    val parentProjectID : UUID,
+    val tasks : MutableList<UUID> = mutableListOf()
     )

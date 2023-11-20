@@ -8,5 +8,5 @@ data class ProjectEntity(
         var name: String,
         var description: String,
         var participants: MutableList<UUID>,
-        var taskStatuses: MutableMap<UUID, StatusEntity>
+        var taskStatuses: MutableList<UUID>
 )

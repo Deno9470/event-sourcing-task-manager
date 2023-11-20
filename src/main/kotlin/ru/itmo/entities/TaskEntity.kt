@@ -10,5 +10,5 @@ data class TaskEntity (
     var description: String,
     var statusId: UUID,
     var parentProjectID: UUID,
-    var executors: MutableList<UUID>
+    var executors: MutableList<UUID> = mutableListOf()
 )
