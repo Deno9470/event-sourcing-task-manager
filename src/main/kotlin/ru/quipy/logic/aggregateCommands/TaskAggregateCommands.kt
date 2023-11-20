@@ -1,6 +1,8 @@
 package ru.quipy.logic.aggregateCommands
 
+import ru.quipy.api.aggregates.TaskAggregate
 import ru.quipy.api.aggregatesEvents.*
+import ru.quipy.domain.Event
 import ru.quipy.logic.aggregateStates.TaskAggregateState
 import java.util.*
 
@@ -17,10 +19,16 @@ import java.util.*
 
 
 
-fun TaskAggregateState.createTask(taskName: String, description: String, statusId: UUID, parentProjectId: UUID): TaskCreatedEvent {
+fun TaskAggregateState.createTask(taskName: String, description: String, statusId: UUID, parentProjectId: UUID): List<Event<TaskAggregate>> {
     // TODO Project existing check ???
     // TODO Put Status.Id = Created
-    return TaskCreatedEvent(taskId = UUID.randomUUID(), taskName, description, statusId, parentProjectId)
+    val taskId = UUID.randomUUID()
+    return ArrayList(
+        listOf(
+            TaskCreatedEvent(taskId, taskName, description, statusId, parentProjectId),
+            TaskStatusChangedEvent(taskId, null, statusId)
+        )
+    )
 }
 
 fun TaskAggregateState.renameTask(newTaskName: String) : TaskRenamedEvent {
