@@ -41,7 +41,9 @@ fun TaskAggregateState.addExecutor(addedUserId: UUID) : ExecutorAddedEvent {
 }
 
 fun TaskAggregateState.removeExecutor(removedUserId: UUID) : ExecutorRemovedEvent {
-    // TODO User in task check
+    if (!executors.contains(removedUserId)) {
+        throw IllegalArgumentException("No such user with ID in this task: $removedUserId")
+    }
     return ExecutorRemovedEvent(this.getId(), removedUserId)
 }
 
