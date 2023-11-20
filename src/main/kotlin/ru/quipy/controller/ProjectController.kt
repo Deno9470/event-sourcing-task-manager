@@ -7,9 +7,7 @@ import ru.quipy.core.EventSourcingService
 import ru.quipy.domain.Event
 import ru.quipy.dto.CreateProjectDto
 import ru.quipy.dto.CreateStatusDto
-import ru.quipy.logic.*
 import ru.quipy.logic.aggregateCommands.*
-import ru.quipy.logic.aggregateStates.ColorEnum
 import ru.quipy.logic.aggregateStates.ProjectAggregateState
 import java.util.*
 
@@ -47,7 +45,7 @@ class ProjectController(
     }
 
     @PatchMapping("/{projectId}")
-    fun renameTask(@PathVariable projectId: UUID, @RequestBody newProjectName: String) : ProjectRenamedEvent {
+    fun renameProject(@PathVariable projectId: UUID, @RequestBody newProjectName: String) : ProjectRenamedEvent {
         return projectEsService.update(projectId) {
             it.renameProject(newProjectName)
         }
