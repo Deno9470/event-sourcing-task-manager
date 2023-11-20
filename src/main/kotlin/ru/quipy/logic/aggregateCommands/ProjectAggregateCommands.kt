@@ -44,7 +44,7 @@ fun ProjectAggregateState.removeTaskStatus(removedStatusId: UUID) : TaskStatusRe
     if (!taskStatuses.containsKey(removedStatusId)) {
         throw IllegalArgumentException("No such status with ID: $removedStatusId")
     }
-    return TaskStatusRemovedEvent(removedStatusId)
+    return TaskStatusRemovedEvent(removedStatusId, this.getId())
 }
 
 

@@ -82,6 +82,7 @@ class TaskStatusCreatedEvent(
 @DomainEvent(name = TASK_STATUS_REMOVED_EVENT)
 class TaskStatusRemovedEvent(
     val statusId: UUID,
+    val projectId: UUID,
     createdAt: Long = System.currentTimeMillis(),
 ) : Event<ProjectAggregate>(
     name = TASK_STATUS_REMOVED_EVENT,
