@@ -1,5 +1,6 @@
 package ru.quipy.controller
 
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import ru.quipy.api.aggregates.ProjectAggregate
 import ru.quipy.api.aggregatesEvents.*
@@ -13,25 +14,19 @@ import java.util.*
 
 //Создайте REST API для
 // создания,
-// измнения и
+// изменения и
 // получения последней версии агрегатов по его ID.
 
 
 @RestController
-@RequestMapping("/projects")
-class ProjectController(
+@RequestMapping(
+    produces = [MediaType.APPLICATION_JSON_VALUE],
+    value = ["/\${api.prefix}/\${api.currentVersion}" +
+            "/projects"]
+)
+class ProjectWritingController(
     val projectEsService: EventSourcingService<UUID, ProjectAggregate, ProjectAggregateState>
 ) {
-
-    @GetMapping("")
-    fun getAllProjects() : List<ProjectAggregateState> {
-        throw IllegalAccessException()
-    }
-
-    @GetMapping("/{projectId}")
-    fun getProject(@PathVariable projectId: UUID) : ProjectAggregateState? {
-        return projectEsService.getState(projectId)
-    }
 
     @PostMapping("")
     fun createProject(@RequestBody createProjectDto: CreateProjectDto) : List<Event<ProjectAggregate>> {

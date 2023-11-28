@@ -1,5 +1,6 @@
 package ru.quipy.controller
 
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import ru.quipy.api.aggregates.TaskAggregate
 import ru.quipy.api.aggregatesEvents.*
@@ -12,13 +13,17 @@ import java.util.*
 
 //Создайте REST API для
 // создания,
-// измнения
+// изменения
 // получения последней версии агрегатов по его ID.
 
 
 @RestController
-@RequestMapping("/tasks")
-class TaskController(
+@RequestMapping(
+    produces = [MediaType.APPLICATION_JSON_VALUE],
+    value = ["/\${api.prefix}/\${api.currentVersion}" +
+            "/tasks"]
+)
+class TaskWritingController(
     val taskEsService: EventSourcingService<UUID, TaskAggregate, TaskAggregateState>
 ) {
     @GetMapping("")
