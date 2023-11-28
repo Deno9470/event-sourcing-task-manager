@@ -1,0 +1,19 @@
+api:
+  prefix: "api"
+  currentVersion: "v1"
+
+# MongoDB properties
+spring.data.mongodb:
+  host: localhost
+  port: 27017
+  database: tiny-es
+
+# Tiny event sourcing library properties
+event.sourcing:
+  auto-scan-enabled: true
+  scan-package: ru.quipy
+  snapshot-frequency: 100
+
+
+# TODO: MapStruct
+# TODO: find() in reading Services
