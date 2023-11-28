@@ -5,4 +5,5 @@ import ru.itmo.entities.StatusEntity
 import java.util.*
 
 interface StatusRepository : MongoRepository<StatusEntity, UUID> {
+    fun getAllByParentProjectID(projectId: UUID) : Iterable<StatusEntity>
 }
